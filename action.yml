@@ -1,13 +1,30 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: Make Meeting Issues
+author: wesleytodd
+description: Create meeting issues based on a schedule and template
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  token:
+    description: 'The github token'
     required: true
-    default: '1000'
+  schedules:
+    description: 'An array of strings representing the schedules in ISO-8601 intervals'
+    required: true
+  createWithin:
+    description: 'An ISO-8601 duration to limit when the meeting issues are created (default P7D)'
+    default: 'P7D'
+  labels:
+    description: 'The labels to apply to issues'
+    default: 'meeting'
+  agendaLabel:
+    description: 'The label used to identify agenda items'
+    default: 'meeting'
+  issueTitle:
+    description: 'A title for the meeting issue'
+  issueTemplate:
+    description: 'A name of an issue template (found in .github/ISSUE_TEMPLATES)'
+    default: 'meeting.md'
 outputs:
-  time: # output will be available to future steps 
-    description: 'The message to output'
+  issueNumber:
+    description: 'If an issue was created, this will be its number'
 runs:
   using: 'node12'
   main: 'dist/index.js'

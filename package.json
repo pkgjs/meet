@@ -1,34 +1,34 @@
 {
-  "name": "javascript-action",
-  "version": "1.0.0",
-  "description": "JavaScript Action Template",
+  "name": "@wesleytodd/meeting-maker",
+  "version": "0.0.0",
+  "description": "Make a meeting issue based on a schedule",
   "main": "index.js",
-  "scripts": {
-    "lint": "eslint index.js",
-    "package": "ncc build index.js -o dist",
-    "test": "eslint index.js && jest"
-  },
+  "type": "commonjs",
+  "author": "Wes Todd <wes@wesleytodd.com>",
+  "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/javascript-action.git"
+    "url": "https://github.com/wesleytodd/meeting-maker.git"
   },
-  "keywords": [
-    "GitHub",
-    "Actions",
-    "JavaScript"
-  ],
-  "author": "GitHub",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/actions/javascript-action/issues"
+  "scripts": {
+    "test": "standard && mocha test/index.js",
+    "test:integration": "standard && mocha",
+    "preversion": "npm t",
+    "postpublish": "git push origin && git push origin --tags",
+    "prepare": "ncc --source-map build run.js -o dist"
   },
-  "homepage": "https://github.com/actions/javascript-action#readme",
   "dependencies": {
-    "@actions/core": "^1.1.1"
+    "@actions/core": "^1.2.3",
+    "@actions/github": "^2.1.1",
+    "ejs": "^3.0.2",
+    "luxon": "^1.23.0",
+    "safe-parse-list": "^0.1.1"
   },
   "devDependencies": {
-    "@zeit/ncc": "^0.20.5",
-    "eslint": "^6.3.0",
-    "jest": "^24.9.0"
+    "@zeit/ncc": "^0.22.0",
+    "dotenv": "^8.2.0",
+    "mocha": "^7.1.1",
+    "semver": "^7.1.3",
+    "standard": "^14.3.3"
   }
 }

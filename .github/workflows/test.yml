@@ -1,4 +1,4 @@
-name: "units-test"
+name: test
 on:
   pull_request:
   push:
@@ -7,19 +7,49 @@ on:
       - 'releases/*'
 
 jobs:
-  # unit tests
-  units:
+  test:
     runs-on: ubuntu-latest
+    # strategy:
+    #   matrix:
+    #     node-version: [10.x, 12.x, 13.x]
     steps:
     - uses: actions/checkout@v1
+    # - name: Use Node.js ${{ matrix.node-version }}
+    #   uses: actions/setup-node@v1
+    #   with:
+    #     node-version: ${{ matrix.node-version }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
     - run: npm ci
     - run: npm test
 
-  # test action works running from the graph  
-  test:
+  action-in-action:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: ./
+    # - name: Use Node.js 13.x
+    #   uses: actions/setup-node@v1
+    #   with:
+    #     node-version: 13.x
+    - uses: actions/cache@v1
       with:
-        milliseconds: 1000
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - run: npm ci
+    - uses: ./
+      id: maker
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        schedules: 2020-04-02T17:00:00.0Z/P1D
+        issueTitle: 'Test Meeting <%= date.toFormat("yyyy-MM-dd") %>'
+        createWithin: P2D
+        labels: meeting, test
+        agendaLabel: meeting-agenda-test
+    - name: clean up issue
+      run: node ./test/_close-issue.js ${{ secrets.GITHUB_TOKEN }} ${{ steps.maker.outputs.issueNumber }}

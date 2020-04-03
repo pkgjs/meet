@@ -1,114 +1,76 @@
+# Schedule regularly occuring meetings via GitHub Issue
 
-<p align="center">
-  <a href="https://github.com/actions/javascript-action/actions"><img alt="javscript-action status" src="https://github.com/actions/javascript-action/workflows/units-test/badge.svg"></a>
-</p>
+<!--
+[![NPM Version](https://img.shields.io/npm/v/meeting-maker.svg)](https://npmjs.org/package/meeting-maker)
+[![NPM Downloads](https://img.shields.io/npm/dm/meeting-maker.svg)](https://npmjs.org/package/meeting-maker)
+-->
+[![test](https://github.com/wesleytodd/meeting-maker/workflows/test/badge.svg)](https://github.com/wesleytodd/meeting-maker/actions?query=workflow%3Atest)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://github.com/standard/standard)
 
-# Create a JavaScript Action
-
-Use this template to bootstrap the creation of a JavaScript action.:rocket:
-
-This template includes tests, linting, a validation workflow, publishing, and versioning guidance.  
-
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
-
-## Create an action from this template
-
-Click the `Use this Template` and provide the new repo details for your action
-
-## Code in Master
-
-Install the dependencies  
-```bash
-$ npm install
-```
-
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
-```
-
-## Change action.yml
-
-The action.yml contains defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-const core = require('@actions/core');
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Package for distribution
-
-GitHub Actions will run the entry point from the action.yml. Packaging assembles the code into one file that can be checked in to Git, enabling fast and reliable execution and preventing the need to check in node_modules.
-
-Actions are run from GitHub repos.  Packaging the action will create a packaged action in the dist folder.
-
-Run package
-
-```bash
-npm run package
-```
-
-Since the packaged index.js is run from the dist folder.
-
-```bash
-git add dist
-```
-
-## Create a release branch
-
-Users shouldn't consume the action from master since that would be latest code and actions can break compatibility between major versions.
-
-Checkin to the v1 release branch
-
-```bash
-$ git checkout -b v1
-$ git commit -a -m "v1 release"
-```
-
-```bash
-$ git push origin v1
-```
-
-Your action is now published! :rocket: 
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
+Schedule meetings via a GitHub Action.  Creates issues based on a schedule and template.
 
 ## Usage
 
-You can now consume the action by referencing the v1 branch
-
 ```yaml
-uses: actions/javascript-action@v1
-with:
-  milliseconds: 1000
+name: Schedule team meetings
+on:
+  schedule:
+    - cron: '0 0 * * * *'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: wesleytodd/meeting-maker@v0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        schedules: 2020-04-02T17:00:00.0Z/P1D
 ```
 
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
+### Inputs
+
+The meeting schedule, issue, etc can be configured with inouts to this action.
+
+- `token`: (required) The token from the action for calling to the GitHub API.
+- `schedules`: (required) The ISO-8601 interval for the schedule. Default: `${now/P7D}` seven days from now
+- `createWithin`: (required) The ISO-8601 duration for how soon before the meeting to create the issue. Default `P7D`
+- `labels`: Labels to create the issue with. Default: `meeting`
+- `agendaLabel`: Label to pull the agenda from. Default: `meeting-agenda`
+- `issueTitle`: Template string for issue title.  Default: `Meeting <%= date.toFormat('yyyy-MM-dd') %>`
+- `issueTemplate`: The name of the issue template found in `.github/ISSUE_TEMPLATE`. Default: `meeting.md`
+
+### Default Issue Template
+
+The default issue template can be seen here: https://github.com/wesleytodd/meeting-maker/issues/34
+
+It is based off the one commonly used on across the Node.js Org, but any additions or improvements are welcome.
+
+### JS API Usage
+
+The main logic of the module is also published to npm.
+
+```
+$ npm i @wesleytodd/meeting-maker
+```
+
+```javascript
+const maker = require('@wesleytodd/meeting-maker')
+
+;(await () => {
+  const issue = await maker.meetings..createNextMeeting(client, {
+    owner: 'wesleytodd',
+    repo: 'meeting-maker',
+    schedules: []
+  })
+  console.log(issue) // the response from the GitHub api creating the issue
+})()
+```
+
+## Contributing
+
+This package welcomes contributions.  While the basic unit tests are runnable
+(`npm t`) Unfortunatly because it is requires access to the GitHub api it means
+you need to have a token with access to create the issues as part of the
+integration tests.  To specify the key you need to create a personal access token
+and put it in a `.env` file as `GITHUB_TOKEN=<TOKEN>`.  Then you can run
+`npm run test:integration` to run the main integration tests.  To be honest this
+should probably be configurable, contributions welcome.
