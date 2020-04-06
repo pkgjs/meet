@@ -1,6 +1,9 @@
 name: Make Meeting Issues
 author: wesleytodd
 description: Create meeting issues based on a schedule and template
+branding:
+  icon: 'calendar'
+  color: 'green'
 inputs:
   token:
     description: 'The github token'
