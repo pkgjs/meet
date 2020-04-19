@@ -9,15 +9,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    # strategy:
-    #   matrix:
-    #     node-version: [10.x, 12.x, 13.x]
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 13.x]
     steps:
     - uses: actions/checkout@v1
-    # - name: Use Node.js ${{ matrix.node-version }}
-    #   uses: actions/setup-node@v1
-    #   with:
-    #     node-version: ${{ matrix.node-version }}
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
     - uses: actions/cache@v1
       with:
         path: ~/.npm
@@ -31,10 +31,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    # - name: Use Node.js 13.x
-    #   uses: actions/setup-node@v1
-    #   with:
-    #     node-version: 13.x
+    - name: Use Node.js 13.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 13.x
     - uses: actions/cache@v1
       with:
         path: ~/.npm
