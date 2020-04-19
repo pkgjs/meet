@@ -4,7 +4,7 @@
 [![NPM Version](https://img.shields.io/npm/v/meeting-maker.svg)](https://npmjs.org/package/meeting-maker)
 [![NPM Downloads](https://img.shields.io/npm/dm/meeting-maker.svg)](https://npmjs.org/package/meeting-maker)
 -->
-[![test](https://github.com/wesleytodd/meeting-maker/workflows/test/badge.svg)](https://github.com/wesleytodd/meeting-maker/actions?query=workflow%3Atest)
+[![test](https://github.com/pkgjs/meet/workflows/test/badge.svg)](https://github.com/pkgjs/meet/actions?query=workflow%3Atest)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://github.com/standard/standard)
 
 Schedule meetings via a GitHub Action.  Creates issues based on a schedule and template.
@@ -20,7 +20,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: wesleytodd/meeting-maker@v0
+    - uses: pkgjs/meet@v0
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         schedules: 2020-04-02T17:00:00.0Z/P1D
@@ -49,16 +49,16 @@ It is based off the one commonly used on across the Node.js Org, but any additio
 The main logic of the module is also published to npm.
 
 ```
-$ npm i @wesleytodd/meeting-maker
+$ npm i @pkgjs/meet
 ```
 
 ```javascript
-const maker = require('@wesleytodd/meeting-maker')
+const maker = require('@pkgjs/meet')
 
 ;(await () => {
   const issue = await maker.meetings..createNextMeeting(client, {
-    owner: 'wesleytodd',
-    repo: 'meeting-maker',
+    owner: 'pkgjs',
+    repo: 'meet',
     schedules: []
   })
   console.log(issue) // the response from the GitHub api creating the issue
