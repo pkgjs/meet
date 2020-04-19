@@ -1,5 +1,5 @@
 {
-  "name": "@wesleytodd/meeting-maker",
+  "name": "@pkgjs/meet",
   "version": "0.0.1",
   "description": "Make a meeting issue based on a schedule",
   "main": "index.js",
@@ -8,7 +8,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wesleytodd/meeting-maker.git"
+    "url": "https://github.com/pkgjs/meet.git"
   },
   "scripts": {
     "test": "standard && mocha test/index.js",
