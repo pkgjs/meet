@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "commonjs",
   "author": "Wes Todd <wes@wesleytodd.com>",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/pkgjs/meet.git"
