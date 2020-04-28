@@ -55,8 +55,8 @@ $ npm i @pkgjs/meet
 ```javascript
 const maker = require('@pkgjs/meet')
 
-;(await () => {
-  const issue = await maker.meetings..createNextMeeting(client, {
+;(async () => {
+  const issue = await maker.meetings.createNextMeeting(client, {
     owner: 'pkgjs',
     repo: 'meet',
     schedules: []
