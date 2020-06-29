@@ -15,7 +15,9 @@
     "test:integration": "standard && mocha",
     "preversion": "npm t",
     "postpublish": "git push origin && git push origin --tags",
-    "prepare": "ncc --source-map build run.js -o dist"
+    "prepare": "ncc --source-map build run.js -o dist",
+    "pr:install": "npm ci",
+    "pr:delete": "rimraf ./node_modules"
   },
   "dependencies": {
     "@actions/core": "^1.2.3",
@@ -28,6 +30,7 @@
     "@zeit/ncc": "^0.22.0",
     "dotenv": "^8.2.0",
     "mocha": "^7.1.1",
+    "rimraf": "^3.0.2",
     "semver": "^7.1.3",
     "standard": "^14.3.3"
   }
