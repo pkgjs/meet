@@ -17,7 +17,7 @@
     "postpublish": "git push origin && git push origin --tags",
     "prepare": "ncc --source-map build run.js -o dist",
     "pr:install": "npm ci",
-    "pr:delete": "rm rf ./node_modules"
+    "pr:delete": "rm -rf ./node_modules"
   },
   "dependencies": {
     "@actions/core": "^1.2.3",
