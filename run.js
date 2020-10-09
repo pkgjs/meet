@@ -10,7 +10,7 @@ const defaultTemplate = require('./lib/default-template')
 ;(async function run () {
   try {
     const token = core.getInput('token')
-    
+
     // variables we use for timing
     const schedules = list(core.getInput('schedules'))
     const createWithin = core.getInput('createWithin')
