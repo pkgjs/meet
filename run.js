@@ -10,13 +10,13 @@ const defaultTemplate = require('./lib/default-template')
 ;(async function run () {
   try {
     const token = core.getInput('token')
-    
+
     // variables we use for timing
     const schedules = list(core.getInput('schedules'))
     const createWithin = core.getInput('createWithin')
 
     // variables we use for labels
-    const labels = list(core.getInput('labels'))
+    const meetingLabel = core.getInput('meetingLabel')
     const agendaLabel = core.getInput('agendaLabel')
 
     // variables we use for content
@@ -52,7 +52,7 @@ const defaultTemplate = require('./lib/default-template')
       ...repo,
       schedules,
       template,
-      labels,
+      meetingLabel,
       createWithin,
       agendaLabel,
       issueTitle: titleTemplate

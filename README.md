@@ -36,7 +36,7 @@ The meeting schedule, issue, etc can be configured with inouts to this action.
 - `token`: (required) The token from the action for calling to the GitHub API.
 - `schedules`: (required) The ISO-8601 interval for the schedule. Default: `${now/P7D}` seven days from now
 - `createWithin`: (required) The ISO-8601 duration for how soon before the meeting to create the issue. Default `P7D`
-- `labels`: Labels to create the issue with. Default: `meeting`
+- `meetingLabel`: Label to create the meeting issue with. Default: `meeting`
 - `agendaLabel`: Label to pull the agenda from. Default: `meeting-agenda`
 - `issueTitle`: Template string for issue title.  Default: `Meeting <%= date.toFormat('yyyy-MM-dd') %>`
 - `issueTemplate`: The name of the issue template found in `.github/ISSUE_TEMPLATE`. Default: `meeting.md`
