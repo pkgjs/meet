@@ -6,25 +6,30 @@ branding:
   color: 'green'
 inputs:
   token:
-    description: 'The github token'
+    description: 'GitHub Token used for authentication. See the following link for more details: https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token'
     required: true
   schedules:
-    description: 'An array of strings representing the schedules in ISO-8601 intervals'
+    description: 'An array of strings representing the meeting schedules in the format YYYY-MM-DD (ISO-8601 intervals).'
     required: true
   createWithin:
-    description: 'An ISO-8601 duration to limit when the meeting issues are created (default P7D)'
+    description: 'Defines when the meeting issues are created using ISO-8601 durations. Defaults to one week before the meeting (Using the ISO-8601 durations format, this is P7D).'
     default: 'P7D'
+    required: false
   labels:
-    description: 'The labels to apply to issues'
+    description: 'The labels to apply to meeting issues. Defaults to "meeting".'
     default: 'meeting'
+    required: false
   agendaLabel:
-    description: 'The label used to identify agenda items'
+    description: 'The label used to identify agenda items within the same repository.'
     default: 'meeting'
+    required: false
   issueTitle:
-    description: 'A title for the meeting issue'
+    description: 'A title to be used when creating meeting issues.'
+    required: false
   issueTemplate:
     description: 'A name of an issue template (found in .github/ISSUE_TEMPLATES)'
     default: 'meeting.md'
+    required: false
 outputs:
   issueNumber:
     description: 'If an issue was created, this will be its number'
