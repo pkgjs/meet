@@ -10,12 +10,19 @@ const defaultTemplate = require('./lib/default-template')
 ;(async function run () {
   try {
     const token = core.getInput('token')
+
+    // variables we use for timing
     const schedules = list(core.getInput('schedules'))
-    const labels = list(core.getInput('labels'))
-    const issueTemplate = core.getInput('issueTemplate')
     const createWithin = core.getInput('createWithin')
+
+    // variables we use for labels
+    const labels = list(core.getInput('labels'))
     const agendaLabel = core.getInput('agendaLabel')
+
+    // variables we use for content
     const issueTitle = core.getInput('issueTitle')
+    const issueTemplate = core.getInput('issueTemplate')
+
     const repo = github.context.repo
     const client = new github.GitHub(token)
 
