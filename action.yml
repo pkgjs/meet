@@ -20,16 +20,17 @@ inputs:
     default: 'meeting'
     required: false
   agendaLabel:
-    description: 'The label used to identify agenda items within the same repository.'
-    default: 'meeting'
+    description: 'The label used to identify agenda items within the same repository. Default: "meeting-agenda"'
+    default: 'meeting-agenda'
     required: false
   issueTitle:
     description: 'A title to be used when creating meeting issues.'
+    default: 'Meeting <%= date.toFormat("yyyy-MM-dd") %>'
     required: false
   issueTemplate:
     description: 'A name of an issue template (found in .github/ISSUE_TEMPLATES)'
     default: 'meeting.md'
-    required: false
+    required: true
 outputs:
   issueNumber:
     description: 'If an issue was created, this will be its number'
