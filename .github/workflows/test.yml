@@ -48,7 +48,7 @@ jobs:
         schedules: 2020-04-02T17:00:00.0Z/P1D
         issueTitle: 'Test Meeting <%= date.toFormat("yyyy-MM-dd") %>'
         createWithin: P2D
-        meetingLabel: testMeeting
+        meetingLabels: testMeeting, test
         agendaLabel: meeting-agenda-test
     - name: clean up issue
       run: node ./test/_close-issue.js ${{ secrets.GITHUB_TOKEN }} ${{ steps.maker.outputs.issueNumber }}

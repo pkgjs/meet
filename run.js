@@ -16,7 +16,7 @@ const defaultTemplate = require('./lib/default-template')
     const createWithin = core.getInput('createWithin')
 
     // variables we use for labels
-    const meetingLabel = core.getInput('meetingLabel')
+    const meetingLabels = core.getInput('meetingLabels')
     const agendaLabel = core.getInput('agendaLabel')
 
     // variables we use for content
@@ -52,7 +52,7 @@ const defaultTemplate = require('./lib/default-template')
       ...repo,
       schedules,
       template,
-      meetingLabel,
+      meetingLabels,
       createWithin,
       agendaLabel,
       issueTitle: titleTemplate

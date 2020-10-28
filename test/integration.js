@@ -27,7 +27,7 @@ suite(`${pkg.name} integration`, () => {
     assert.deepStrictEqual(issue.repo, 'meeting-maker')
     assert.deepStrictEqual(issue.title, `Test Meeting ${DateTime.fromISO('2020-04-16T13:00:00.0Z').toFormat('yyyy-MM-dd')}`)
     assert.deepStrictEqual(issue.agendaLabel, 'meeting-agenda')
-    assert.deepStrictEqual(issue.meetingLabel, ['testMeeting'])
+    assert.deepStrictEqual(issue.meetingLabels, ['testMeeting, test'])
     assert(typeof issue.body === 'string')
     assert(Array.isArray(issue.agendaIssues))
   })
@@ -45,7 +45,7 @@ suite(`${pkg.name} integration`, () => {
       ],
       now: DateTime.fromISO('2020-04-13T13:00:00.0Z'),
       issueTitle: (date) => `Test Meeting ${date.toFormat('yyyy-MM-dd')}`,
-      meetingLabel: ['testMeeting']
+      labels: ['testMeeting', 'test']
     })
 
     assert.deepStrictEqual(issue.data.title, `Test Meeting ${DateTime.fromISO('2020-04-16T13:00:00.0Z').toFormat('yyyy-MM-dd')}`)
