@@ -81,7 +81,7 @@ const defaultNotesTemplate = require('./lib/default-notes-template')
 
     opts.issue = issue.data
 
-    if (createNotes) {
+    if (createNotes === true || createNotes === 'true') {
       let notesTemplate = defaultNotesTemplate
       if (notesUserTemplate) {
         try {
@@ -94,13 +94,15 @@ const defaultNotesTemplate = require('./lib/default-notes-template')
           console.error(`notesTemplate missing or invalid (${notesUserTemplate}): ${e.message}`)
         }
       }
-      opts.meetingNotes = await notes.create(notesTemplate, { ...opts })
+      opts.meetingNotes = await notes.create(notesTemplate, opts)
       console.log(`Notes created: ${opts.meetingNotes}`)
     }
 
-    const updatedIssue = await meetings.setMeetingIssueBody(client, opts)
+    const updatedIssue = await meetings.setMeetingIssueBody(client, { ...opts, template })
     if (!updatedIssue) {
-      return console.log('No issues to create')
+      return console.log('No issues to update')
+    } else {
+      return console.log('Issue updated successfully')
     }
   } catch (e) {
     console.error(e)
