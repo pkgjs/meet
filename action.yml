@@ -31,6 +31,14 @@ inputs:
     description: 'A name of an issue template (found in .github/ISSUE_TEMPLATES)'
     default: 'meeting.md'
     required: true
+  createNotes:
+    description: 'Create meeting notes on HackMD'
+    default: 'false'
+    required: false
+  notesUserTemplate:
+    description: 'A name of an issue template (found in .github/meet)'
+    default: 'notes.md'
+    required: false
 outputs:
   issueNumber:
     description: 'If an issue was created, this will be its number'

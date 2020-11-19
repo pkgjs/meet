@@ -1,6 +1,6 @@
 name: test
 on:
-  pull_request:
+  pull_request_target:
   push:
     branches:
       - master
@@ -50,5 +50,6 @@ jobs:
         createWithin: P2D
         meetingLabels: testMeeting, test
         agendaLabel: meeting-agenda-test
+        createNotes: true
     - name: clean up issue
       run: node ./test/_close-issue.js ${{ secrets.GITHUB_TOKEN }} ${{ steps.maker.outputs.issueNumber }}
