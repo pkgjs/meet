@@ -63,7 +63,7 @@ const defaultNotesTemplate = require('./lib/default-notes-template')
     const opts = {
       ...repo,
       schedules,
-      meetingLabels
+      meetingLabels,
       createWithin,
       agendaLabel,
       agendaIssues,
