@@ -5,7 +5,9 @@ const list = require('safe-parse-list')
 const ejs = require('ejs')
 const meetings = require('./lib/meetings')
 const issues = require('./lib/issues')
+const notes = require('./lib/notes')
 const defaultTemplate = require('./lib/default-template')
+const defaultNotesTemplate = require('./lib/default-notes-template')
 
 ;(async function run () {
   try {
@@ -22,6 +24,10 @@ const defaultTemplate = require('./lib/default-template')
     // variables we use for content
     const issueTitle = core.getInput('issueTitle')
     const issueTemplate = core.getInput('issueTemplate')
+
+    // variables we use for notes
+    const createNotes = core.getInput('createNotes')
+    const notesUserTemplate = core.getInput('notesTemplate')
 
     const repo = github.context.repo
     const client = new github.GitHub(token)
@@ -48,21 +54,56 @@ const defaultTemplate = require('./lib/default-template')
       }
     }
 
-    const issue = await meetings.createNextMeeting(client, {
+    const agendaIssues = (await client.issues.listForRepo({
+      owner: repo.owner,
+      repo: repo.repo,
+      state: 'open',
+      labels: agendaLabel
+    })).data || []
+    const opts = {
       ...repo,
       schedules,
-      template,
       labels,
       createWithin,
       agendaLabel,
+      agendaIssues,
       issueTitle: titleTemplate
-    })
+    }
+
+    const issue = await meetings.createNextMeeting(client, { ...opts, template })
     if (!issue) {
       return console.log('No issues to create')
     }
 
-    core.setOutput('issueNumber', issue.data.number.toString())
-    console.log(`Issue created: (#${issue.data.number}) ${issue.data.title}`)
+    const issueNumber = issue.data.number
+    core.setOutput('issueNumber', issueNumber.toString())
+    console.log(`Issue created: (#${issueNumber}) ${issue.data.title}`)
+
+    opts.issue = issue.data
+
+    if (createNotes === true || createNotes === 'true') {
+      let notesTemplate = defaultNotesTemplate
+      if (notesUserTemplate) {
+        try {
+          const tmpl = await notes.getNotesTemplate(client, {
+            ...repo,
+            notesUserTemplate
+          })
+          notesTemplate = ejs.compile(tmpl)
+        } catch (e) {
+          console.error(`notesTemplate missing or invalid (${notesUserTemplate}): ${e.message}`)
+        }
+      }
+      opts.meetingNotes = await notes.create(notesTemplate, opts)
+      console.log(`Notes created: ${opts.meetingNotes}`)
+    }
+
+    const updatedIssue = await meetings.setMeetingIssueBody(client, { ...opts, template })
+    if (!updatedIssue) {
+      return console.log('No issues to update')
+    } else {
+      return console.log('Issue updated successfully')
+    }
   } catch (e) {
     console.error(e)
     core.setFailed(e.message)

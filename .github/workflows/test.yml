@@ -50,5 +50,6 @@ jobs:
         createWithin: P2D
         labels: meeting, test
         agendaLabel: meeting-agenda-test
+        createNotes: true
     - name: clean up issue
       run: node ./test/_close-issue.js ${{ secrets.GITHUB_TOKEN }} ${{ steps.maker.outputs.issueNumber }}

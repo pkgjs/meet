@@ -31,7 +31,7 @@ Extracted from **<%= agendaLabel %>** labelled issues and pull requests from **<
 
 ## Links
 
-* Minutes:
+* Minutes: <%= meetingNotes || '' %>
 
 ### Joining the meeting
 
