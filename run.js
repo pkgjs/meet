@@ -18,7 +18,7 @@ const defaultNotesTemplate = require('./lib/default-notes-template')
     const createWithin = core.getInput('createWithin')
 
     // variables we use for labels
-    const labels = list(core.getInput('labels'))
+    const meetingLabels = core.getInput('meetingLabels')
     const agendaLabel = core.getInput('agendaLabel')
 
     // variables we use for content
@@ -63,7 +63,7 @@ const defaultNotesTemplate = require('./lib/default-notes-template')
     const opts = {
       ...repo,
       schedules,
-      labels,
+      meetingLabels
       createWithin,
       agendaLabel,
       agendaIssues,
