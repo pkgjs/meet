@@ -1,4 +1,4 @@
-# Schedule regularly occuring meetings via GitHub Issue
+# Schedule regularly occurring meetings via GitHub Issue
 
 <!--
 [![NPM Version](https://img.shields.io/npm/v/meeting-maker.svg)](https://npmjs.org/package/meeting-maker)
@@ -71,7 +71,7 @@ const maker = require('@pkgjs/meet')
 ## Contributing
 
 This package welcomes contributions.  While the basic unit tests are runnable
-(`npm t`) Unfortunatly because it is requires access to the GitHub api it means
+(`npm t`) Unfortunately because it is requires access to the GitHub api it means
 you need to have a token with access to create the issues as part of the
 integration tests.  To specify the key you need to create a personal access token
 and put it in a `.env` file as `GITHUB_TOKEN=<TOKEN>`.  Then you can run
