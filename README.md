@@ -9,7 +9,7 @@
 
 Schedule meetings via a GitHub Action.  Creates issues based on a schedule and template.
 
-This repository is managed by the [Package Maintenance Working Group](https://github.com/nodejs/package-maintenance), see [Governance](https://github.com/nodejs/package-maintenance/blob/master/Governance.md).
+This repository is managed by the [Package Maintenance Working Group](https://github.com/nodejs/package-maintenance), see [Governance](https://github.com/nodejs/package-maintenance/blob/main/Governance.md).
 
 
 ## Usage
