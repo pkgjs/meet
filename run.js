@@ -33,13 +33,17 @@ const defaultNotesTemplate = require('./lib/default-notes-template')
     const client = new github.GitHub(token)
 
     let template = defaultTemplate
+
+    // if we have a user-provided issue template, try to get it
+    // and then if it exists reassign template variable from the
+    // default to the user-provided template
     if (issueTemplate) {
       try {
-        const tmpl = await issues.getIssueTemplate(client, {
+        const checkIfIssueTemplateExists = await issues.checkIfIssueTemplateExists(client, {
           ...repo,
           template: issueTemplate
         })
-        template = ejs.compile(tmpl)
+        template = ejs.compile(checkIfIssueTemplateExists)
       } catch (e) {
         console.error(`template missing or invalid (${issueTemplate}): ${e.message}`)
       }
