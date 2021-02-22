@@ -39,13 +39,13 @@ const defaultNotesTemplate = require('./lib/default-notes-template')
     // default to the user-provided template
     if (issueTemplate) {
       try {
-        const checkIfIssueTemplateExists = await issues.checkIfIssueTemplateExists(client, {
+        const userProvidedIssueTemplate = await issues.stringifiedIssueTemplate(client, {
           ...repo,
           template: issueTemplate
         })
-        template = ejs.compile(checkIfIssueTemplateExists)
-      } catch (e) {
-        console.error(`template missing or invalid (${issueTemplate}): ${e.message}`)
+        template = ejs.compile(userProvidedIssueTemplate)
+      } catch (error) {
+        console.error(`template missing or invalid (${issueTemplate}): ${error.message}`)
       }
     }
 
