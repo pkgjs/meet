@@ -8,6 +8,7 @@ const issues = require('./lib/issues')
 const notes = require('./lib/notes')
 const defaultTemplate = require('./lib/default-template')
 const defaultNotesTemplate = require('./lib/default-notes-template')
+const conversions = require('./lib/conversions')
 
 ;(async function run () {
   try {
@@ -43,6 +44,7 @@ const defaultNotesTemplate = require('./lib/default-notes-template')
           ...repo,
           template: issueTemplate
         })
+        template = conversions.covnert(userProvidedIssueTemplate)
         template = ejs.compile(userProvidedIssueTemplate)
       } catch (error) {
         console.error(`template missing or invalid (${issueTemplate}): ${error.message}`)
