@@ -45,7 +45,8 @@ The meeting schedule, issue, etc can be configured with inouts to this action.
 
 The default issue template can be seen in the ISSUE_TEMPLATES directory, as [meeting.md](https://github.com/pkgjs/meet/blob/main/.github/ISSUE_TEMPLATE/meeting.md). Additionally, you can find example issues of the latest version via the closed issues that are the result of CI tests.
 
-Our default template is based off of the practices of the Node.js project's practices around meetings, but changes and enhancements are welcome.
+Our default template is based off of the Node.js project's practices around meetings, but changes and enhancements are welcome.
+
 
 ### Custom Issue Templates
 
