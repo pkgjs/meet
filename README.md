@@ -62,7 +62,7 @@ We provide some shorthand that you can use in your meeting templates. We'll auto
   - Result: The issue's title.
 - Agenda Label:
   - Shorthand: `<!-- agenda label -->`
-  - Result: The label for agenda items to be pulled from that youv'e defined in the Action's YAML configuration.
+  - Result: The label for agenda items to be pulled from that you've defined in the Action's YAML configuration.
 - Invitees:i
   - Shorthand: `<!-- invitees -->`
   - Result: The list of invitees you've defined in the Action's YAML configuration.
