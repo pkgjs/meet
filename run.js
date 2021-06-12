@@ -8,6 +8,7 @@ const issues = require('./lib/issues')
 const notes = require('./lib/notes')
 const defaultTemplate = require('./lib/default-template')
 const defaultNotesTemplate = require('./lib/default-notes-template')
+const conversions = require('./lib/conversions')
 
 ;(async function run () {
   try {
@@ -33,15 +34,20 @@ const defaultNotesTemplate = require('./lib/default-notes-template')
     const client = new github.GitHub(token)
 
     let template = defaultTemplate
+
+    // if we have a user-provided issue template, try to get it
+    // and then if it exists reassign template variable from the
+    // default to the user-provided template
     if (issueTemplate) {
       try {
-        const tmpl = await issues.getIssueTemplate(client, {
+        const userProvidedIssueTemplate = await issues.stringifiedIssueTemplate(client, {
           ...repo,
           template: issueTemplate
         })
-        template = ejs.compile(tmpl)
-      } catch (e) {
-        console.error(`template missing or invalid (${issueTemplate}): ${e.message}`)
+        template = conversions.covnert(userProvidedIssueTemplate)
+        template = ejs.compile(userProvidedIssueTemplate)
+      } catch (error) {
+        console.error(`template missing or invalid (${issueTemplate}): ${error.message}`)
       }
     }
 
