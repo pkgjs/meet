@@ -30,6 +30,19 @@ const conversions = require('./lib/conversions')
     const createNotes = core.getInput('createNotes')
     const notesUserTemplate = core.getInput('notesTemplate')
 
+    let repos = core.getInput('repos')
+    if (repos) {
+      repos = repos.split(',').map((str) => {
+        const parts = str.split('/')
+        return {
+          owner: parts[0],
+          repo: parts[1]
+        }
+      })
+    } else {
+      repos = [github.context.repo]
+    }
+
     const repo = github.context.repo
     const client = new github.GitHub(token)
 
@@ -44,7 +57,7 @@ const conversions = require('./lib/conversions')
           ...repo,
           template: issueTemplate
         })
-        template = conversions.covnert(userProvidedIssueTemplate)
+        template = conversions.convert(userProvidedIssueTemplate)
         template = ejs.compile(userProvidedIssueTemplate)
       } catch (error) {
         console.error(`template missing or invalid (${issueTemplate}): ${error.message}`)
@@ -60,12 +73,16 @@ const conversions = require('./lib/conversions')
       }
     }
 
-    const agendaIssues = (await client.issues.listForRepo({
-      owner: repo.owner,
-      repo: repo.repo,
-      state: 'open',
-      labels: agendaLabel
-    })).data || []
+    let agendaIssues = []
+    for (const r of repos) {
+      const _agendaIssues = (await client.issues.listForRepo({
+        owner: r.owner,
+        repo: r.repo,
+        state: 'open',
+        labels: agendaLabel
+      })).data || []
+      agendaIssues = agendaIssues.concat(_agendaIssues)
+    }
     const opts = {
       ...repo,
       schedules,
