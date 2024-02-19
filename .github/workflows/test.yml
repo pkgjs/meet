@@ -1,6 +1,6 @@
 name: test
 on:
-  pull_request_target:
+  pull_request:
   push:
     branches:
       - main
@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [16.x, 18.x, 20.x]
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
@@ -23,11 +23,11 @@ jobs:
   action-in-action:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
+    - uses: actions/checkout@v4
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v4
       with:
-        node-version: 16.x
+        node-version: 18.x
     - run: npm install
     - uses: ./
       id: maker
@@ -39,5 +39,6 @@ jobs:
         meetingLabels: testMeeting, test
         agendaLabel: meeting-agenda-test
         createNotes: true
+        repos: pkgjs/meet,pkgjs/meet
     - name: clean up issue
       run: node ./test/_close-issue.js ${{ secrets.GITHUB_TOKEN }} ${{ steps.maker.outputs.issueNumber }}

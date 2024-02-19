@@ -39,6 +39,9 @@ inputs:
     description: 'A name of an issue template (found in .github/meet)'
     default: 'notes.md'
     required: false
+  repos:
+    description: 'An optional list of repos in the format: <org>/<repo>,<org>/<repo>'
+    required: false
 outputs:
   issueNumber:
     description: 'If an issue was created, this will be its number'
