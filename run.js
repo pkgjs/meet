@@ -9,8 +9,10 @@ const notes = require('./lib/notes')
 const defaultTemplate = require('./lib/default-template')
 const defaultNotesTemplate = require('./lib/default-notes-template')
 const conversions = require('./lib/conversions')
+const pkg = require('./package.json')
 
 ;(async function run () {
+  console.log(`Version: ${pkg.version}`)
   try {
     const token = core.getInput('token')
     const client = new github.GitHub(token)
