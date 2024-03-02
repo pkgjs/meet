@@ -20,8 +20,8 @@ const conversions = require('./lib/conversions')
     const createWithin = core.getInput('createWithin')
 
     // variables we use for labels
-    const meetingLabels = core.getInput('meetingLabels')
     const agendaLabel = core.getInput('agendaLabel')
+    const meetingLabels = core.getInput('meetingLabels')
 
     // variables we use for content
     const issueTitle = core.getInput('issueTitle')
