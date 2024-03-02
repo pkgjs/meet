@@ -92,7 +92,7 @@ const conversions = require('./lib/conversions')
     let agendaIssues = []
     for (const r of repos) {
       console.log(`Fetching issues for ${r.owner}/${r.repo}`)
-      const _agendaIssues = await client.paginate('GET /repos/{owner}/{repo}/pulls', {
+      const _agendaIssues = await client.paginate('GET /repos/{owner}/{repo}/issues', {
         owner: r.owner,
         repo: r.repo,
         state: 'open',
