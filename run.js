@@ -51,6 +51,7 @@ const conversions = require('./lib/conversions')
     if (orgs) {
       orgs = orgs.split(',').map((o) => o.trim())
       for (const org of orgs) {
+        console.log(`Fetching repos for ${org}`)
         const resp = await client.repos.listForOrg({ org })
         resp.data.forEach((r) => {
           repos.push({
@@ -90,6 +91,7 @@ const conversions = require('./lib/conversions')
 
     let agendaIssues = []
     for (const r of repos) {
+      console.log(`Fetching issues for ${r.owner}/${r.repo}`)
       const _agendaIssues = (await client.issues.listForRepo({
         owner: r.owner,
         repo: r.repo,
