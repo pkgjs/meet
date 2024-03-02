@@ -71,7 +71,8 @@ const conversions = require('./lib/conversions')
       try {
         const userProvidedIssueTemplate = await issues.stringifiedIssueTemplate(client, {
           ...repo,
-          template: issueTemplate
+          template: issueTemplate,
+          ref: github.context.payload?.pull_request?.head?.ref || github.context.payload?.repository?.default_branch || 'main'
         })
         template = conversions.convert(userProvidedIssueTemplate)
         template = ejs.compile(userProvidedIssueTemplate)

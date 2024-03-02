@@ -49,5 +49,5 @@ outputs:
   issueNumber:
     description: 'If an issue was created, this will be its number'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
