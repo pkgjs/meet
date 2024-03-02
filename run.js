@@ -13,6 +13,7 @@ const conversions = require('./lib/conversions')
 ;(async function run () {
   try {
     const token = core.getInput('token')
+    const client = new github.GitHub(token)
 
     // variables we use for timing
     const schedules = list(core.getInput('schedules'))
@@ -30,10 +31,12 @@ const conversions = require('./lib/conversions')
     const createNotes = core.getInput('createNotes')
     const notesUserTemplate = core.getInput('notesTemplate')
 
+    // Get list of repos
     let repos = core.getInput('repos')
+    const repo = github.context.repo
     if (repos) {
       repos = repos.split(',').map((str) => {
-        const parts = str.split('/')
+        const parts = str.trim().split('/')
         return {
           owner: parts[0],
           repo: parts[1]
@@ -43,8 +46,20 @@ const conversions = require('./lib/conversions')
       repos = [github.context.repo]
     }
 
-    const repo = github.context.repo
-    const client = new github.GitHub(token)
+    // Get repos from orgs
+    let orgs = core.getInput('orgs')
+    if (orgs) {
+      orgs = orgs.split(',').map((o) => o.trim())
+      for (const org of orgs) {
+        const resp = await client.repos.listForOrg({ org })
+        resp.data.forEach((r) => {
+          repos.push({
+            owner: org,
+            repo: r.name
+          })
+        })
+      }
+    }
 
     let template = defaultTemplate
 

@@ -42,6 +42,9 @@ inputs:
   repos:
     description: 'An optional list of repos in the format: <org>/<repo>,<org>/<repo>'
     required: false
+  orgs:
+    description: 'An optional list of org in the format: <org>,<org>'
+    required: false
 outputs:
   issueNumber:
     description: 'If an issue was created, this will be its number'

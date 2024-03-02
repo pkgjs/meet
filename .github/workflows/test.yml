@@ -40,5 +40,6 @@ jobs:
         agendaLabel: meeting-agenda-test
         createNotes: true
         repos: pkgjs/meet,pkgjs/meet
+        orgs: pkgjs
     - name: clean up issue
       run: node ./test/_close-issue.js ${{ secrets.GITHUB_TOKEN }} ${{ steps.maker.outputs.issueNumber }}
