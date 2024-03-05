@@ -92,7 +92,7 @@ const pkg = require('./package.json')
       }
     }
 
-    let agendaIssues = []
+    const agendaIssues = []
     for (const r of repos) {
       console.log(`Fetching issues for ${r.owner}/${r.repo}`)
       const _agendaIssues = await client.paginate('GET /repos/{owner}/{repo}/issues', {
@@ -101,8 +101,14 @@ const pkg = require('./package.json')
         state: 'open',
         labels: agendaLabel
       })
-      agendaIssues = agendaIssues.concat(_agendaIssues)
+      for (const i of _agendaIssues) {
+        if (!agendaIssues.find((ii) => ii.url === i.url)) {
+          agendaIssues.push(i)
+          break
+        }
+      }
     }
+
     const opts = {
       ...repo,
       schedules,
