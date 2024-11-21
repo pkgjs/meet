@@ -38,6 +38,7 @@ jobs:
         createWithin: P2D
         meetingLabels: test
         agendaLabel: meeting-agenda-test
+        meetingLink: https://github.com/pkgjs/meet
         createNotes: true
         repos: pkgjs/meet,pkgjs/meet
         orgs: pkgjs

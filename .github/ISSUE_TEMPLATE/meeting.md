@@ -35,5 +35,5 @@ Extracted from **<%= agendaLabel %>** labelled issues and pull requests from **<
 
 ### Joining the meeting
 
-* link for participants:
+* link for participants: <%= meetingLink %>
 * For those who just want to watch:
