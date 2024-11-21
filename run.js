@@ -33,6 +33,8 @@ const pkg = require('./package.json')
     const createNotes = core.getInput('createNotes')
     const notesUserTemplate = core.getInput('notesTemplate')
 
+    const meetingLink = core.getInput('meetingLink')
+
     // Get list of repos
     let repos = core.getInput('repos')
     const repo = github.context.repo
@@ -115,6 +117,7 @@ const pkg = require('./package.json')
       meetingLabels,
       createWithin,
       agendaLabel,
+      meetingLink,
       agendaIssues,
       issueTitle: titleTemplate
     }
