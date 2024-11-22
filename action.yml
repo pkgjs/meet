@@ -20,7 +20,7 @@ inputs:
     default: 'meeting'
     required: false
   meetingLink:
-    description: 'A optional link to the join the meeting'
+    description: 'An optional meeting join link'
     required: false
   agendaLabel:
     description: 'The label used to identify agenda items within the same repository. Default: "meeting-agenda"'
