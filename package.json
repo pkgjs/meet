@@ -13,7 +13,8 @@
   "scripts": {
     "build": "npx @vercel/ncc build",
     "test": "standard && mocha test/index.js",
-    "test:integration": "standard && mocha",
+    "test:integration": "standard && mocha test/integration.js",
+    "test:integration:debug": "GITHUB_TOKEN=$(gh auth token) mocha --inspect --inspect-brk test/integration.js",
     "lint:fix": "standard --fix",
     "preversion": "npm t",
     "postpublish": "git push origin && git push origin --tags",
