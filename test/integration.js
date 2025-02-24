@@ -16,18 +16,21 @@ suite(`${pkg.name} integration`, () => {
     const issue = await meetings.shouldCreateNextMeetingIssue(client, {
       owner: 'wesleytodd',
       repo: 'meeting-maker',
-      issueTitle: (date) => `Test Meeting ${date.toFormat('yyyy-MM-dd')}`,
+      issueTitle: ({ date }) => `Test Meeting ${date.toFormat('yyyy-MM-dd')}`,
+      createWithin: 'P7D',
+      agendaLabel: 'meeting-agenda',
       schedules: [
         // 1pm GMT April 16 repeating every 28 days
         '2020-04-16T13:00:00.0Z/P28D'
       ],
-      now: DateTime.fromISO('2020-04-13T13:00:00.0Z')
+      now: DateTime.fromISO('2020-04-13T13:00:00.0Z'),
+      meetingLabels: ['testMeeting', 'test']
     })
     assert.deepStrictEqual(issue.owner, 'wesleytodd')
     assert.deepStrictEqual(issue.repo, 'meeting-maker')
     assert.deepStrictEqual(issue.title, `Test Meeting ${DateTime.fromISO('2020-04-16T13:00:00.0Z').toFormat('yyyy-MM-dd')}`)
     assert.deepStrictEqual(issue.agendaLabel, 'meeting-agenda')
-    assert.deepStrictEqual(issue.meetingLabels, ['testMeeting, test'])
+    assert.deepStrictEqual(issue.labels, ['testMeeting', 'test'])
     assert(typeof issue.body === 'string')
     assert(Array.isArray(issue.agendaIssues))
   })
@@ -36,6 +39,7 @@ suite(`${pkg.name} integration`, () => {
     const issue = await meetings.createNextMeeting(client, {
       owner: 'wesleytodd',
       repo: 'meeting-maker',
+      createWithin: 'P7D',
       schedules: [
         // 5pm GMT April 2 repeating every 28 days
         '2020-04-02T17:00:00.0Z/P28D',
@@ -44,8 +48,8 @@ suite(`${pkg.name} integration`, () => {
         '2020-04-16T13:00:00.0Z/P28D'
       ],
       now: DateTime.fromISO('2020-04-13T13:00:00.0Z'),
-      issueTitle: (date) => `Test Meeting ${date.toFormat('yyyy-MM-dd')}`,
-      labels: ['testMeeting', 'test']
+      issueTitle: ({ date }) => `Test Meeting ${date.toFormat('yyyy-MM-dd')}`,
+      meetingLabels: ['testMeeting', 'test']
     })
 
     assert.deepStrictEqual(issue.data.title, `Test Meeting ${DateTime.fromISO('2020-04-16T13:00:00.0Z').toFormat('yyyy-MM-dd')}`)
