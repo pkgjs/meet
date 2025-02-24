@@ -26,12 +26,13 @@ jobs:
     - uses: pkgjs/meet@v0
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        schedules: 2020-04-02T17:00:00.0Z/P1D
+        schedules: 2020-04-02T17:00:00.0Z/P1D # Every 1 day from 2020-04-02 at 5PM UTC
+        createWithin: P2D # Create issue 2 days before the scheduled meeting
 ```
 
-### Inputs
+### Github Action Inputs
 
-The meeting schedule, issue, etc can be configured with inouts to this action.
+The meeting schedule, issue, etc can be configured with inputs to this action.
 
 - `token`: (required) The token from the action for calling to the GitHub API.
 - `schedules`: (required) The ISO-8601 interval for the schedule. Default: `${now/P7D}` seven days from now
@@ -54,28 +55,77 @@ If you don't want to use the default issue template, you can use a custom issue 
 
 You can use both our shorthand and JavaScript in your meeting templates.
 
-#### Shorthand in Your Custom Meeting Templates
+## Template Data and Automatic Replacements
+
+#### Autoreplacing Shorthand in Custom Meeting Templates
 
 We provide some shorthand that you can use in your meeting templates. We'll automatically replace the shorthand with the relevant dynamic information.
 
-- Title:
-  - Shorthand: `<!-- title -->`
-  - Result: The issue's title.
-- Agenda Label:
-  - Shorthand: `<!-- agenda label -->`
-  - Result: The label for agenda items to be pulled from that you've defined in the Action's YAML configuration.
-- Invitees:
-  - Shorthand: `<!-- invitees -->`
-  - Result: The list of invitees you've defined in the Action's YAML configuration.
-- Observers:
-  - Shorthand: `<!-- observers  -->`
-  - Result: The list of observers you've defined in the Action's YAML configuration.
-
 If you'd like to see more shorthand available, we absolutely welcome PRs.
+
+- **`<!-- title -->`**: The issue's title.
+- **`<!-- agenda label -->`**: The label for agenda items to be pulled from that you've defined in the Action's YAML configuration.
+- **`<!-- invitees -->`**: The list of invitees you've defined in the Action's YAML configuration.
+- **`<!-- observers -->`**: The list of observers you've defined in the Action's YAML configuration.
+
+```md
+## Title
+<!-- title -->
+
+## Agenda Items
+Extracted from issues labeled with <!-- agenda label -->.
+
+## Participants
+- Invitees: <!-- invitees -->
+- Observers: <!-- observers -->
+```
 
 #### JavaScript in Your Custom Meeting Templates
 
 You can include custom JavaScript in your custom meeting templates. We use [ejs](https://ejs.co/), so anything within an ejs tag will be parsed as JavaScript.
+
+When using EJS templates for your meeting issues, the following data properties are available:
+
+#### EJS Template Data
+
+- **`date`**: `DateTime` - The date of the meeting, formatted using Luxon.
+- **`agendaIssues`**: `Array<Object>` - A list of agenda issues, each with properties like:
+  - `title`: `string` - The title of the agenda issue.
+  - `number`: `number` - The issue number.
+  - `html_url`: `string` - The URL to the issue on GitHub.
+- **`agendaLabel`**: `string` - The label used to identify agenda items.
+- **`meetingNotes`**: `string` - A link or content for meeting notes.
+- **`owner`**: `string` - The GitHub repository owner.
+- **`repo`**: `string` - The GitHub repository name.
+- **`title`**: `string` - The title of the issue, which can be dynamically generated.
+- **`invitees`**: `Array<string>` - A list of invitees, if provided.
+- **`observers`**: `Array<string>` - A list of observers, if provided.
+
+```ejs
+<% const timezones = [
+  'America/Los_Angeles',
+  'Asia/Tokyo',
+]; %>
+
+# <%= title %>
+
+## Date/Time
+| Timezone | Date/Time |
+|----------|-----------|
+<% timezones.forEach(zone => { %>
+| <%= zone %> | <%= date.setZone(zone).toFormat('EEE dd-MMM-yyyy HH:mm (hh:mm a)') %> |
+<% }) %>
+
+## Agenda
+Extracted from **<%= agendaLabel %>** labeled issues and pull requests from **<%= owner %>/<%= repo %>**.
+
+<% agendaIssues.forEach(issue => { %>
+- <%= issue.title %> [#<%= issue.number %>](<%= issue.html_url %>)
+<% }) %>
+
+## Meeting Notes
+<%= meetingNotes || 'No notes available.' %>
+```
 
 ### JS API Usage
 
