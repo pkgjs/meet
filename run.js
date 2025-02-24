@@ -96,13 +96,13 @@ const pkg = require('./package.json')
 
     const agendaIssues = []
     for (const r of repos) {
-      console.log(`Fetching issues for ${r.owner}/${r.repo}`)
       const _agendaIssues = await client.paginate('GET /repos/{owner}/{repo}/issues', {
         owner: r.owner,
         repo: r.repo,
         state: 'open',
         labels: agendaLabel
       })
+      console.log(`Fetching issues for ${r.owner}/${r.repo}: Found ${_agendaIssues.length}`)
       for (const i of _agendaIssues) {
         if (!agendaIssues.find((ii) => ii.url === i.url)) {
           agendaIssues.push(i)
