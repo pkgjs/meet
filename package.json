@@ -1,6 +1,6 @@
 {
   "name": "@pkgjs/meet",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Make a meeting issue based on a schedule",
   "main": "dist/index.js",
   "type": "commonjs",
