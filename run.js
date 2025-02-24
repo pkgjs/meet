@@ -107,7 +107,6 @@ const pkg = require('./package.json')
         console.log(`Adding Issue: ${i.url}`)
         if (!agendaIssues.find((ii) => ii.url === i.url)) {
           agendaIssues.push(i)
-          break
         }
       }
     }
