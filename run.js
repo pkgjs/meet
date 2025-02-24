@@ -110,6 +110,7 @@ const pkg = require('./package.json')
         }
       }
     }
+    console.log(`Found ${agendaIssues.length} total issues for agenda`)
 
     const opts = {
       ...repo,
