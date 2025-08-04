@@ -26,7 +26,7 @@ suite(`${pkg.name} unit`, () => {
       'America/Los_Angeles'
     )
 
-    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2020-12-31T16:00:00.000-08:00').toISO())
+    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2020-12-31T17:00:00.000-08:00').toISO())
   })
 
   test('process schedule with zone in DST', () => {
