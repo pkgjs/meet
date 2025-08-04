@@ -1,7 +1,11 @@
 'use strict'
+
+/* global Temporal */
+
 const { suite, test } = require('mocha')
 const assert = require('assert')
-const { DateTime } = require('luxon')
+const polyfill = require('@js-temporal/polyfill')
+global.Temporal = polyfill.Temporal
 const pkg = require('../package.json')
 const { convert, templates } = require('../lib/conversions')
 const meetings = require('../lib/meetings')
@@ -14,9 +18,9 @@ suite(`${pkg.name} unit`, () => {
 
       // 1pm GMT April 16 for a period of 28 days
       '2020-04-16T13:00:00.0Z/P28D'
-    ], DateTime.fromISO('2020-04-03T13:00:00.0Z'))
+    ], Temporal.Instant.from('2020-04-03T13:00:00.0Z'))
 
-    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2020-04-16T13:00:00.0Z').toISO())
+    assert.deepStrictEqual(next.toString(), Temporal.Instant.from('2020-04-16T13:00:00.0Z').toString())
   })
 })
 

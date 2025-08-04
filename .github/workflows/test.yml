@@ -34,7 +34,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         schedules: 2020-04-02T17:00:00.0Z/P1D
-        issueTitle: 'Test Meeting <%= date.toFormat("yyyy-MM-dd") %>'
+        issueTitle: 'Test Meeting <%= date.toZonedDateTimeISO("UTC").toPlainDate().toString() %>'
         createWithin: P2D
         meetingLabels: test
         agendaLabel: meeting-agenda-test
