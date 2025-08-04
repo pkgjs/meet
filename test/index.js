@@ -16,7 +16,7 @@ suite(`${pkg.name} unit`, () => {
       '2020-04-16T13:00:00.0Z/P28D'
     ], DateTime.fromISO('2020-04-03T13:00:00.0Z'))
 
-    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2020-04-16T13:00:00.0Z').toISO())
+    assert.deepStrictEqual(next.toMillis(), DateTime.fromISO('2020-04-16T13:00:00.0Z').toMillis())
   })
 
   test('process schedule with zone', () => {
@@ -26,7 +26,7 @@ suite(`${pkg.name} unit`, () => {
       'America/Los_Angeles'
     )
 
-    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2020-12-31T17:00:00.000-08:00').toISO())
+    assert.deepStrictEqual(next.toMillis(), DateTime.fromISO('2020-12-31T17:00:00.000-08:00').toMillis())
   })
 
   test('process schedule with zone in DST', () => {
@@ -36,7 +36,7 @@ suite(`${pkg.name} unit`, () => {
       'America/Los_Angeles'
     )
 
-    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2021-04-01T17:00:00.000-07:00').toISO())
+    assert.deepStrictEqual(next.toMillis(), DateTime.fromISO('2021-04-01T17:00:00.000-07:00').toMillis())
   })
 })
 
