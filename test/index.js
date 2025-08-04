@@ -21,22 +21,22 @@ suite(`${pkg.name} unit`, () => {
 
   test('process schedule with zone', () => {
     const next = meetings.getNextScheduledMeeting(
-      ['2020-04-02T17:00:00.0Z/P7D'],
+      ['2020-04-02T17:00:00/P7D'],
       DateTime.fromISO('2021-01-01T00:00:00.0Z'),
       'America/Los_Angeles'
     )
 
-    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2021-01-07T09:00:00.000-08:00').toISO())
+    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2020-12-31T16:00:00.000-08:00').toISO())
   })
 
   test('process schedule with zone in DST', () => {
     const next = meetings.getNextScheduledMeeting(
-      ['2020-04-02T17:00:00.0Z/P7D'],
+      ['2020-04-02T17:00:00/P7D'],
       DateTime.fromISO('2021-04-01T00:00:00.0Z'),
       'America/Los_Angeles'
     )
 
-    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2021-04-01T10:00:00.000-07:00').toISO())
+    assert.deepStrictEqual(next.toISO(), DateTime.fromISO('2021-04-01T17:00:00.000-07:00').toISO())
   })
 })
 
