@@ -20,6 +20,7 @@ const pkg = require('./package.json')
     // variables we use for timing
     const schedules = list(core.getInput('schedules'))
     const createWithin = core.getInput('createWithin')
+    const timezone = core.getInput('timezone')
 
     // variables we use for labels
     const agendaLabel = core.getInput('agendaLabel')
@@ -115,6 +116,7 @@ const pkg = require('./package.json')
     const opts = {
       ...repo,
       schedules,
+      timezone,
       meetingLabels,
       createWithin,
       agendaLabel,

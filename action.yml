@@ -11,6 +11,9 @@ inputs:
   schedules:
     description: 'An array of strings representing the meeting schedules in the format YYYY-MM-DD (ISO-8601 intervals).'
     required: true
+  timezone:
+    description: 'Timezone to use for schedule times (e.g. "America/Chicago", "Europe/Madrid"). Useful for following daylight saving time (DST) / summer time. Default: "UTC"'
+    required: false
   createWithin:
     description: 'Defines when the meeting issues are created using ISO-8601 durations. Defaults to one week before the meeting (Using the ISO-8601 durations format, this is P7D).'
     default: 'P7D'
