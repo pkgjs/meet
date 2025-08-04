@@ -22,6 +22,115 @@ suite(`${pkg.name} unit`, () => {
 
     assert.deepStrictEqual(next.toString(), Temporal.Instant.from('2020-04-16T13:00:00.0Z').toString())
   })
+
+  test('DST - spring forward', () => {
+    // 2024-03-10 - spring forward in US
+    const springForwardDate = Temporal.Instant.from('2024-03-10T13:00:00.0Z')
+    const chicagoTime = springForwardDate.toZonedDateTimeISO('America/Chicago')
+
+    // s/b 8 AM CDT (UTC-5)
+    assert.strictEqual(chicagoTime.hour, 8)
+    assert.strictEqual(chicagoTime.minute, 0)
+    assert.strictEqual(chicagoTime.offset, '-05:00')
+  })
+
+  test('DST - fall back', () => {
+    // 2024-11-03 - fall back in US
+    const fallBackDate = Temporal.Instant.from('2024-11-03T13:00:00.0Z')
+    const chicagoTime = fallBackDate.toZonedDateTimeISO('America/Chicago')
+
+    // s/b 7 AM CST (UTC-6)
+    assert.strictEqual(chicagoTime.hour, 7)
+    assert.strictEqual(chicagoTime.minute, 0)
+    assert.strictEqual(chicagoTime.offset, '-06:00')
+  })
+
+  test('DST - summer', () => {
+    // 2024-07-15 - summer time
+    const summerDate = Temporal.Instant.from('2024-07-15T13:00:00.0Z')
+    const londonTime = summerDate.toZonedDateTimeISO('Europe/London')
+    const madridTime = summerDate.toZonedDateTimeISO('Europe/Madrid')
+
+    // London s/b 2 PM BST (UTC+1)
+    assert.strictEqual(londonTime.hour, 14)
+    assert.strictEqual(londonTime.offset, '+01:00')
+
+    // Madrid s/b 3 PM CEST (UTC+2)
+    assert.strictEqual(madridTime.hour, 15)
+    assert.strictEqual(madridTime.offset, '+02:00')
+  })
+
+  test('DST - winter', () => {
+    // 2024-01-15 - winter time
+    const winterDate = Temporal.Instant.from('2024-01-15T13:00:00.0Z')
+    const londonTime = winterDate.toZonedDateTimeISO('Europe/London')
+    const madridTime = winterDate.toZonedDateTimeISO('Europe/Madrid')
+
+    // London s/b 1 PM GMT (UTC+0)
+    assert.strictEqual(londonTime.hour, 13)
+    assert.strictEqual(londonTime.offset, '+00:00')
+
+    // Madrid s/b 2 PM CET (UTC+1)
+    assert.strictEqual(madridTime.hour, 14)
+    assert.strictEqual(madridTime.offset, '+01:00')
+  })
+
+  test('Temporal Instant creation and comparison', () => {
+    const instant1 = Temporal.Instant.from('2024-03-10T13:00:00.0Z')
+    const instant2 = Temporal.Instant.from('2024-03-10T13:00:00.0Z')
+    const instant3 = Temporal.Instant.from('2024-03-10T14:00:00.0Z')
+
+    assert.strictEqual(instant1.epochMilliseconds, instant2.epochMilliseconds)
+    assert(instant1.epochMilliseconds < instant3.epochMilliseconds)
+  })
+
+  test('Temporal Duration operations', () => {
+    const duration = Temporal.Duration.from('P28D')
+    const start = Temporal.Instant.from('2024-03-10T13:00:00.0Z')
+    const zonedStart = start.toZonedDateTimeISO('UTC')
+    const end = zonedStart.add(duration).toInstant()
+
+    // 28 days later s/b 2024-04-07
+    const expected = Temporal.Instant.from('2024-04-07T13:00:00.0Z')
+    assert.strictEqual(end.epochMilliseconds, expected.epochMilliseconds)
+  })
+
+  test('getNextScheduledMeeting with DST transition', () => {
+    const schedules = [
+      '2024-03-10T13:00:00.0Z/P7D', // spring forward
+      '2024-11-03T13:00:00.0Z/P7D' // fall back
+    ]
+
+    const beforeSpring = Temporal.Instant.from('2024-03-09T13:00:00.0Z')
+    const nextBefore = meetings.getNextScheduledMeeting(schedules, beforeSpring)
+    assert.strictEqual(nextBefore.toString(), '2024-03-10T13:00:00Z')
+
+    const afterSpring = Temporal.Instant.from('2024-03-11T13:00:00.0Z')
+    const nextAfter = meetings.getNextScheduledMeeting(schedules, afterSpring)
+    assert.strictEqual(nextAfter.toString(), '2024-03-17T13:00:00Z')
+  })
+
+  test('Date formatting with Intl.DateTimeFormat', () => {
+    const date = Temporal.Instant.from('2024-03-10T13:00:00.0Z')
+    const zone = 'America/Chicago'
+    const zonedDate = date.toZonedDateTimeISO(zone)
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: zone
+    })
+
+    const formattedDate = formatter.format(new Date(zonedDate.epochMilliseconds))
+    // spring forward
+    assert(formattedDate.includes('Sun'))
+    assert(formattedDate.includes('Mar'))
+    assert(formattedDate.includes('08:00 AM'))
+  })
 })
 
 test('shorthands transform', async () => {
