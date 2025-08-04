@@ -3,8 +3,10 @@
 require('dotenv').config()
 const { suite, test, before } = require('mocha')
 const assert = require('assert')
-const polyfill = require('@js-temporal/polyfill')
-global.Temporal = polyfill.Temporal
+if (!global.Temporal) {
+  const polyfill = require('@js-temporal/polyfill')
+  global.Temporal = polyfill.Temporal
+}
 const github = require('@actions/github')
 const pkg = require('../package.json')
 const meetings = require('../lib/meetings')

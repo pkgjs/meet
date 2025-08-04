@@ -1,11 +1,11 @@
 'use strict'
-
 /* global Temporal */
-
 const { suite, test } = require('mocha')
 const assert = require('assert')
-const polyfill = require('@js-temporal/polyfill')
-global.Temporal = polyfill.Temporal
+if (!global.Temporal) {
+  const polyfill = require('@js-temporal/polyfill')
+  global.Temporal = polyfill.Temporal
+}
 const pkg = require('../package.json')
 const { convert, templates } = require('../lib/conversions')
 const meetings = require('../lib/meetings')
