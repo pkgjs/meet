@@ -1,6 +1,6 @@
 'use strict'
 const core = require('@actions/core')
-const github = require('@actions/github')
+const { getOctokit, context } = require('@actions/github')
 const list = require('safe-parse-list')
 const ejs = require('ejs')
 const meetings = require('./lib/meetings')
@@ -15,7 +15,7 @@ const pkg = require('./package.json')
   console.log(`Version: ${pkg.version}`)
   try {
     const token = core.getInput('token')
-    const client = new github.GitHub(token)
+    const client = getOctokit(token)
 
     // variables we use for timing
     const schedules = list(core.getInput('schedules'))
@@ -38,7 +38,7 @@ const pkg = require('./package.json')
 
     // Get list of repos
     let repos = core.getInput('repos')
-    const repo = github.context.repo
+    const repo = context.repo
     if (repos) {
       repos = repos.split(',').map((str) => {
         const parts = str.trim().split('/')
@@ -48,7 +48,7 @@ const pkg = require('./package.json')
         }
       })
     } else {
-      repos = [github.context.repo]
+      repos = [context.repo]
     }
 
     // Get repos from orgs
@@ -77,7 +77,7 @@ const pkg = require('./package.json')
         const userProvidedIssueTemplate = await issues.stringifiedIssueTemplate(client, {
           ...repo,
           template: issueTemplate,
-          ref: github.context.payload?.pull_request?.head?.ref || github.context.payload?.repository?.default_branch || 'main'
+          ref: context.payload?.pull_request?.head?.ref || context.payload?.repository?.default_branch || 'main'
         })
         template = conversions.convert(userProvidedIssueTemplate)
         template = ejs.compile(userProvidedIssueTemplate)
