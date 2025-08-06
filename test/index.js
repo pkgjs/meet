@@ -141,60 +141,132 @@ suite(`${pkg.name} unit`, () => {
   })
 
   test('schedule parsing with timezone - Chicago', () => {
-    const schedules = ['2024-03-27T21:00:00.0/P2W']
+    const schedules = ['2024-03-27T21:00:00.0[America/Chicago]/P2W']
     const now = Temporal.Instant.from('2024-03-20T13:00:00.0Z')
-    const next = meetings.getNextScheduledMeeting(schedules, now, 'America/Chicago')
+    const next = meetings.getNextScheduledMeeting(schedules, now)
     // 21:00 CDT == 02:00 UTC next day
     const expected = Temporal.Instant.from('2024-03-28T02:00:00.0Z')
     assert.strictEqual(next.epochMilliseconds, expected.epochMilliseconds)
   })
 
   test('schedule parsing with timezone - DST spring forward', () => {
-    const schedules = ['2025-03-09T01:00:00.0/P2W']
+    const schedules = ['2025-03-09T01:00:00.0[America/Chicago]/P2W']
 
     const beforeSpring = Temporal.Instant.from('2025-03-08T13:00:00.0Z')
-    const nextBefore = meetings.getNextScheduledMeeting(schedules, beforeSpring, 'America/Chicago')
+    const nextBefore = meetings.getNextScheduledMeeting(schedules, beforeSpring)
     // 01:00 CST == 07:00 UTC (before spring forward)
     const expectedBefore = Temporal.Instant.from('2025-03-09T07:00:00.0Z')
     assert.strictEqual(nextBefore.epochMilliseconds, expectedBefore.epochMilliseconds)
 
     const afterSpring = Temporal.Instant.from('2025-03-09T13:00:00.0Z')
-    const nextAfter = meetings.getNextScheduledMeeting(schedules, afterSpring, 'America/Chicago')
+    const nextAfter = meetings.getNextScheduledMeeting(schedules, afterSpring)
     // 01:00 CDT == 06:00 UTC (after spring forward)
     const expectedAfter = Temporal.Instant.from('2025-03-23T06:00:00.0Z')
     assert.strictEqual(nextAfter.epochMilliseconds, expectedAfter.epochMilliseconds)
   })
 
   test('schedule parsing with timezone - DST fall back', () => {
-    const schedules = ['2025-11-02T01:00:00.0/P2W']
+    const schedules = ['2025-11-02T01:00:00.0[America/Chicago]/P2W']
 
     const beforeFallBack = Temporal.Instant.from('2025-11-01T13:00:00.0Z')
-    const nextBefore = meetings.getNextScheduledMeeting(schedules, beforeFallBack, 'America/Chicago')
+    const nextBefore = meetings.getNextScheduledMeeting(schedules, beforeFallBack)
     // 01:00 CDT == 06:00 UTC (before fall back)
     const expectedBefore = Temporal.Instant.from('2025-11-02T06:00:00.0Z')
     assert.strictEqual(nextBefore.epochMilliseconds, expectedBefore.epochMilliseconds)
 
     const afterFallBack = Temporal.Instant.from('2025-11-02T13:00:00.0Z')
-    const nextAfter = meetings.getNextScheduledMeeting(schedules, afterFallBack, 'America/Chicago')
+    const nextAfter = meetings.getNextScheduledMeeting(schedules, afterFallBack)
     // 01:00 CST == 07:00 UTC (after fall back)
     const expectedAfter = Temporal.Instant.from('2025-11-16T07:00:00.0Z')
     assert.strictEqual(nextAfter.epochMilliseconds, expectedAfter.epochMilliseconds)
   })
 
   test('schedule parsing with timezone - Los Angeles PST', () => {
-    const schedules = ['2020-04-02T17:00:00/P7D']
+    const schedules = ['2020-04-02T17:00:00[America/Los_Angeles]/P7D']
     const now = Temporal.Instant.from('2021-01-01T00:00:00.0Z')
-    const next = meetings.getNextScheduledMeeting(schedules, now, 'America/Los_Angeles')
+    const next = meetings.getNextScheduledMeeting(schedules, now)
     const expected = Temporal.Instant.from('2020-12-31T17:00:00.0-08:00')
     assert.strictEqual(next.epochMilliseconds, expected.epochMilliseconds)
   })
 
   test('schedule parsing with timezone - Los Angeles PDT', () => {
-    const schedules = ['2020-04-02T17:00:00/P7D']
+    const schedules = ['2020-04-02T17:00:00[America/Los_Angeles]/P7D']
     const now = Temporal.Instant.from('2021-04-01T00:00:00.0Z')
-    const next = meetings.getNextScheduledMeeting(schedules, now, 'America/Los_Angeles')
+    const next = meetings.getNextScheduledMeeting(schedules, now)
     const expected = Temporal.Instant.from('2021-04-01T17:00:00.0-07:00')
     assert.strictEqual(next.epochMilliseconds, expected.epochMilliseconds)
+  })
+
+  test('schedule format validation', () => {
+    const now = Temporal.Instant.from('2021-04-01T00:00:00.0Z')
+
+    const validFormats = [
+      '2020-04-02T17:00:00[America/Chicago]/P7D',
+      '2020-04-02T17:00:00[Europe/London]/P14D',
+      '2020-04-02T17:00:00Z/P7D',
+      '2020-04-02T17:00:00[America/Los_Angeles]/P7D'
+    ]
+
+    validFormats.forEach(format => {
+      const schedules = [format]
+      const next = meetings.getNextScheduledMeeting(schedules, now)
+      assert(next !== null, `valid format should not throw: ${format}`)
+    })
+
+    const invalidFormats = [
+      // offset variations
+      '2020-04-02T17:00:00-06:00[America/Chicago]/P7D',
+      '2020-04-02T17:00:00-0600[America/Chicago]/P7D',
+      '2020-04-02T17:00:00-06:00/P7D',
+      '2020-04-02T17:00:00-0600/P7D',
+      '2020-04-02T17:00:00+06:00/P7D',
+      '2020-04-02T17:00:00+0600/P7D',
+      '2020-04-02T17:00:00+06:00[America/Chicago]/P7D',
+      '2020-04-02T17:00:00+0600[America/Chicago]/P7D',
+      '2020-04-02T17:00:00+06:30/P7D',
+      '2020-04-02T17:00:00-06:30/P7D',
+      '2020-04-02T17:00:00+06:30[America/Chicago]/P7D',
+      // no timezone nor UTC specified
+      '2020-04-02T17:00:00/P7D',
+      // malformed
+      '2020-04-02T17:00:00[America/Chicago/P7D'
+    ]
+
+    invalidFormats.forEach(format => {
+      const schedules = [format]
+      assert.throws(() => {
+        meetings.getNextScheduledMeeting(schedules, now)
+      }, /invalid schedule format/, `invalid format should throw: ${format}`)
+    })
+  })
+
+  test('schedule parsing errors', () => {
+    const now = Temporal.Instant.from('2021-04-01T00:00:00.0Z')
+
+    // invalid timezone identifier
+    assert.throws(() => {
+      meetings.getNextScheduledMeeting(['2020-04-02T17:00:00[Invalid/Timezone]/P7D'], now)
+    }, /invalid schedule format/)
+
+    // invalid date format
+    assert.throws(() => {
+      meetings.getNextScheduledMeeting(['not-a-date[America/Chicago]/P7D'], now)
+    }, /invalid schedule format/)
+
+    // invalid duration format
+    assert.throws(() => {
+      meetings.getNextScheduledMeeting(['2020-04-02T17:00:00[America/Chicago]/not-a-duration'], now)
+    }, /invalid duration/)
+
+    // missing duration
+    assert.throws(() => {
+      meetings.getNextScheduledMeeting(['2020-04-02T17:00:00[America/Chicago]'], now)
+    }, /invalid duration/)
+
+    // empty string
+    assert.throws(() => {
+      meetings.getNextScheduledMeeting([''], now)
+    }, /invalid duration/)
   })
 })
 
