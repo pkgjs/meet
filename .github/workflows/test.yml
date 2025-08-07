@@ -26,6 +26,8 @@ jobs:
 
   testint:
     runs-on: ubuntu-latest
+    # only run if not a fork PR targeting main repo due to permissions
+    if: ${{ !(github.head_repo || github.event.pull_request.head.repo) || github.repository == (github.head_repo.full_name || github.event.pull_request.head.repo.full_name) }}
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js 24
@@ -35,9 +37,13 @@ jobs:
     - run: npm install
     - run: npm run test:integration
       env:
-          GITHUB_TOKEN: ${{ secrets.INT_TEST_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.INT_TEST_TOKEN != '' && secrets.INT_TEST_TOKEN || secrets.GITHUB_TOKEN }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_HEAD_REPO: ${{ github.head_repo && github.head_repo.full_name || github.event.pull_request.head.repo.full_name || '' }}
   action-in-action:
     runs-on: ubuntu-latest
+    # only run if not a fork PR targeting main repo due to permissions
+    if: ${{ !(github.head_repo || github.event.pull_request.head.repo) || github.repository == (github.head_repo.full_name || github.event.pull_request.head.repo.full_name) }}
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js 24
@@ -47,6 +53,9 @@ jobs:
     - run: npm install
     - uses: ./
       id: maker
+      env:
+        TEST_REPOS: ${{ github.repository != 'pkgjs/meet' && github.repository || 'pkgjs/meet,pkgjs/meet' }}
+        TEST_ORGS: ${{ github.repository != 'pkgjs/meet' && '' || 'pkgjs' }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         schedules: 2020-04-02T17:00:00.0Z/P1D
@@ -56,7 +65,7 @@ jobs:
         agendaLabel: meeting-agenda-test
         meetingLink: https://github.com/pkgjs/meet
         createNotes: true
-        repos: pkgjs/meet,pkgjs/meet
-        orgs: pkgjs
+        repos: ${{ env.TEST_REPOS }}
+        orgs: ${{ env.TEST_ORGS }}
     - name: clean up issue
       run: node ./test/_close-issue.js ${{ secrets.GITHUB_TOKEN }} ${{ steps.maker.outputs.issueNumber }}

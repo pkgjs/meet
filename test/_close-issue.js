@@ -6,10 +6,13 @@ const issues = require('../lib/issues')
   if (!issueNumber) {
     return
   }
-  console.log(`Closing test issue ${issueNumber}`)
 
   const client = getOctokit(token)
+  const repo = context.repo
+
+  console.log(`Closing test issue ${issueNumber} in ${repo.owner}/${repo.repo}`)
+
   await issues.closeIssue(client, issueNumber, {
-    ...context.repo
+    ...repo
   })
 })(process.argv)
