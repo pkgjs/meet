@@ -1,8 +1,4 @@
-## Date/Time
-
-| Timezone | Date/Time |
-|----------|-----------|
-<%= [
+<% const timezones = [
   'America/Los_Angeles',
   'America/Denver',
   'America/Chicago',
@@ -14,7 +10,13 @@
   'Asia/Shanghai',
   'Asia/Tokyo',
   'Australia/Sydney'
-].map((zone) => {
+]; %>
+
+## Date/Time
+
+| Timezone | Date/Time |
+|----------|-----------|
+<%= timezones.map((zone) => {
   const zonedDate = date.toZonedDateTimeISO(zone)
   const formatter = new Intl.DateTimeFormat('en-US', {
     weekday: 'short',
@@ -31,6 +33,7 @@
 }).join('\n') %>
 
 Or in your local time:
+
 * https://www.timeanddate.com/worldclock/?iso=<%= date.toZonedDateTimeISO('UTC').toPlainDateTime().toString() %>
 
 ## Agenda
@@ -38,14 +41,22 @@ Or in your local time:
 Extracted from **<%= agendaLabel %>** labelled issues and pull requests from **<%= owner %>/<%= repo %>** prior to the meeting.
 
 <%= agendaIssues.map((i) => {
-  return `* ${i.title} [#${i.number}](${i.html_url})`
+  return `* ${i.html_url}`
 }).join('\n') %>
 
 ## Links
 
 * Minutes: <%= meetingNotes || '' %>
 
-### Joining the meeting
+## Joining the meeting
 
 * link for participants: <%= meetingLink %>
-* For those who just want to watch:
+
+---
+
+Please use the following emoji reactions in this post to indicate your
+availability.
+
+* 👍 - Attending
+* 👎 - Not attending
+* 😕 - Not sure yet
