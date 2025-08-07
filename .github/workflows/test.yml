@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [18, 20, 22, 24]
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -28,17 +28,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js 18.x
+    - name: Use Node.js 24
       uses: actions/setup-node@v4
       with:
-        node-version: 18.x
+        node-version: 24
     - run: npm install
     - uses: ./
       id: maker
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         schedules: 2020-04-02T17:00:00.0Z/P1D
-        issueTitle: 'Test Meeting <%= date.toFormat("yyyy-MM-dd") %>'
+        issueTitle: 'Test Meeting <%= date.toZonedDateTimeISO("UTC").toPlainDate().toString() %>'
         createWithin: P2D
         meetingLabels: test
         agendaLabel: meeting-agenda-test

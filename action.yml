@@ -9,7 +9,7 @@ inputs:
     description: 'GitHub Token used for authentication. See the following link for more details: https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token'
     required: true
   schedules:
-    description: 'An array of strings representing the meeting schedules in the format YYYY-MM-DD (ISO-8601 intervals).'
+    description: 'An array of strings representing the meeting schedules in RFC 3339 format. Supports timezone identifiers (e.g., 2020-04-02T17:00:00[America/Chicago]/P7D) or UTC (e.g., 2020-04-02T17:00:00Z/P7D). Offset usage is not allowed.'
     required: true
   createWithin:
     description: 'Defines when the meeting issues are created using ISO-8601 durations. Defaults to one week before the meeting (Using the ISO-8601 durations format, this is P7D).'
