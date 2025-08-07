@@ -28,7 +28,7 @@ inputs:
     required: false
   issueTitle:
     description: 'A title to be used when creating meeting issues.'
-    default: 'Meeting <%= date.toFormat("yyyy-MM-dd") %>'
+    default: 'Meeting <%= date.toZonedDateTimeISO("UTC").toPlainDate().toString() %>'
     required: false
   issueTemplate:
     description: 'A name of an issue template (found in .github/ISSUE_TEMPLATES)'
