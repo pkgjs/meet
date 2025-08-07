@@ -43,7 +43,7 @@ The meeting schedule, issue, etc can be configured with inputs to this action.
 
 ### Schedule format
 
-The action supports RFC 3339 timezone formats with two schedule options:
+The action supports [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) timezone formats with two schedule options:
 
 #### Timezone identifiers (recommended)
 
