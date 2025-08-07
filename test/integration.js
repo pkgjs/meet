@@ -1,8 +1,8 @@
 'use strict'
-/* global Temporal */
 require('dotenv').config()
 const { suite, test, before } = require('mocha')
 const assert = require('assert')
+/* global Temporal */
 if (!global.Temporal) {
   const polyfill = require('@js-temporal/polyfill')
   global.Temporal = polyfill.Temporal
@@ -20,18 +20,21 @@ suite(`${pkg.name} integration`, () => {
     const issue = await meetings.shouldCreateNextMeetingIssue(client, {
       owner: 'wesleytodd',
       repo: 'meeting-maker',
-      issueTitle: (date) => `Test Meeting ${date.toZonedDateTimeISO('UTC').toPlainDate().toString()}`,
+      issueTitle: ({ date }) => `Test Meeting ${date.toZonedDateTimeISO('UTC').toPlainDate().toString()}`,
+      createWithin: 'P7D',
+      agendaLabel: 'meeting-agenda',
       schedules: [
         // 1pm GMT April 16 repeating every 28 days
         '2020-04-16T13:00:00.0Z/P28D'
       ],
-      now: Temporal.Instant.from('2020-04-13T13:00:00.0Z')
+      now: Temporal.Instant.from('2020-04-13T13:00:00.0Z'),
+      meetingLabels: ['testMeeting', 'test']
     })
     assert.deepStrictEqual(issue.owner, 'wesleytodd')
     assert.deepStrictEqual(issue.repo, 'meeting-maker')
     assert.deepStrictEqual(issue.title, `Test Meeting ${Temporal.Instant.from('2020-04-16T13:00:00.0Z').toZonedDateTimeISO('UTC').toPlainDate().toString()}`)
     assert.deepStrictEqual(issue.agendaLabel, 'meeting-agenda')
-    assert.deepStrictEqual(issue.meetingLabels, ['testMeeting, test'])
+    assert.deepStrictEqual(issue.labels, ['testMeeting', 'test'])
     assert(typeof issue.body === 'string')
     assert(Array.isArray(issue.agendaIssues))
   })
@@ -40,6 +43,7 @@ suite(`${pkg.name} integration`, () => {
     const issue = await meetings.createNextMeeting(client, {
       owner: 'wesleytodd',
       repo: 'meeting-maker',
+      createWithin: 'P7D',
       schedules: [
         // 5pm GMT April 2 repeating every 28 days
         '2020-04-02T17:00:00.0Z/P28D',
@@ -48,8 +52,8 @@ suite(`${pkg.name} integration`, () => {
         '2020-04-16T13:00:00.0Z/P28D'
       ],
       now: Temporal.Instant.from('2020-04-13T13:00:00.0Z'),
-      issueTitle: (date) => `Test Meeting ${date.toZonedDateTimeISO('UTC').toPlainDate().toString()}`,
-      labels: ['testMeeting', 'test']
+      issueTitle: ({ date }) => `Test Meeting ${date.toZonedDateTimeISO('UTC').toPlainDate().toString()}`,
+      meetingLabels: ['testMeeting', 'test']
     })
 
     assert.deepStrictEqual(issue.data.title, `Test Meeting ${Temporal.Instant.from('2020-04-16T13:00:00.0Z').toZonedDateTimeISO('UTC').toPlainDate().toString()}`)
