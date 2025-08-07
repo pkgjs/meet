@@ -1,5 +1,5 @@
 'use strict'
-const github = require('@actions/github')
+const { getOctokit, context } = require('@actions/github')
 const issues = require('../lib/issues')
 
 ;(async ([,, token, issueNumber]) => {
@@ -8,8 +8,8 @@ const issues = require('../lib/issues')
   }
   console.log(`Closing test issue ${issueNumber}`)
 
-  const client = new github.GitHub(token)
+  const client = getOctokit(token)
   await issues.closeIssue(client, issueNumber, {
-    ...github.context.repo
+    ...context.repo
   })
 })(process.argv)
