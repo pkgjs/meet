@@ -100,6 +100,7 @@ If you'd like to see more shorthand available, we absolutely welcome PRs.
 - **`<!-- agenda label -->`**: The label for agenda items to be pulled from that you've defined in the Action's YAML configuration.
 - **`<!-- invitees -->`**: The list of invitees you've defined in the Action's YAML configuration.
 - **`<!-- observers -->`**: The list of observers you've defined in the Action's YAML configuration.
+- **`<!-- meeting link -->`**: The meeting video call link
 
 ```md
 ## Title
