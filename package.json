@@ -24,8 +24,9 @@
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.1",
     "@hackmd/api": "^2.5.0",
-    "ejs": "^3.1.10",
     "@js-temporal/polyfill": "^0.5.1",
+    "@octokit/graphql": "^9.0.1",
+    "ejs": "^3.1.10",
     "safe-parse-list": "^0.1.1"
   },
   "devDependencies": {
