@@ -145,8 +145,6 @@ When using EJS templates for your meeting issues, the following data properties 
   'Australia/Sydney'
 ]; %>
 
-# <%= title %>
-
 ## Date/Time
 
 | Timezone | Date/Time |
