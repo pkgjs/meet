@@ -14,7 +14,10 @@ suite('agenda/issues integration', () => {
 
   test('should fetch issues and PRs from wesleytodd/meeting-maker repo without duplicates', async () => {
     const agendaLabel = 'meeting-agenda-test'
-    const repos = [{ owner: 'wesleytodd', repo: 'meeting-maker' }]
+    const repos = [
+      { owner: 'wesleytodd', repo: 'meeting-maker' },
+      { owner: 'wesleytodd', repo: 'meeting-maker' } // test for when a repo is duplicated
+    ]
 
     const agendaIssues = await agenda.fetchAgendaItems(client, repos, agendaLabel)
 
