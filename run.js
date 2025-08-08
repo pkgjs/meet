@@ -103,11 +103,29 @@ const pkg = require('./package.json')
         state: 'open',
         labels: agendaLabel
       })
+
       console.log(`Fetching issues for ${r.owner}/${r.repo}: Found ${_agendaIssues.length}`)
       for (const i of _agendaIssues) {
         console.log(`Adding Issue: ${i.url}`)
         if (!agendaIssues.find((ii) => ii.url === i.url)) {
           agendaIssues.push(i)
+        }
+      }
+
+      const _agendaPr = await client.paginate('GET /repos/{owner}/{repo}/pulls', {
+        owner: r.owner,
+        repo: r.repo,
+        state: 'open',
+        labels: agendaLabel
+      })
+
+      for (const pr of _agendaPr) {
+        if (pr.labels.some(label => label.name === agendaLabel)) {
+          console.log(`Fetching PRs for ${r.owner}/${r.repo}: Found ${_agendaPr.length}`)
+          if (!agendaIssues.find((ii) => ii.url === pr.url)) {
+            console.log(`Adding PR: ${pr.url}`)
+            agendaIssues.push(pr)
+          }
         }
       }
     }
