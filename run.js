@@ -9,6 +9,7 @@ const notes = require('./lib/notes')
 const defaultTemplate = require('./lib/default-template')
 const defaultNotesTemplate = require('./lib/default-notes-template')
 const conversions = require('./lib/conversions')
+const agenda = require('./lib/agenda')
 const pkg = require('./package.json')
 
 ;(async function run () {
@@ -95,23 +96,7 @@ const pkg = require('./package.json')
       }
     }
 
-    const agendaIssues = []
-    for (const r of repos) {
-      const _agendaIssues = await client.paginate('GET /repos/{owner}/{repo}/issues', {
-        owner: r.owner,
-        repo: r.repo,
-        state: 'open',
-        labels: agendaLabel
-      })
-      console.log(`Fetching issues for ${r.owner}/${r.repo}: Found ${_agendaIssues.length}`)
-      for (const i of _agendaIssues) {
-        console.log(`Adding Issue: ${i.url}`)
-        if (!agendaIssues.find((ii) => ii.url === i.url)) {
-          agendaIssues.push(i)
-        }
-      }
-    }
-    console.log(`Found ${agendaIssues.length} total issues for agenda`)
+    const agendaIssues = await agenda.fetchAgendaItems(client, repos, agendaLabel)
 
     const opts = {
       ...repo,
