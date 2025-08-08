@@ -1,6 +1,7 @@
 'use strict'
 const core = require('@actions/core')
 const { getOctokit, context } = require('@actions/github')
+const { graphql } = require('@octokit/graphql')
 const list = require('safe-parse-list')
 const ejs = require('ejs')
 const meetings = require('./lib/meetings')
@@ -103,14 +104,78 @@ const pkg = require('./package.json')
         state: 'open',
         labels: agendaLabel
       })
+
       console.log(`Fetching issues for ${r.owner}/${r.repo}: Found ${_agendaIssues.length}`)
+
       for (const i of _agendaIssues) {
         console.log(`Adding Issue: ${i.url}`)
         if (!agendaIssues.find((ii) => ii.url === i.url)) {
           agendaIssues.push(i)
         }
       }
+
+      let hasNextPage = true
+      let endCursor = null
+      do {
+        const query = `
+          query($owner: String!, $name: String!, $after: String) {
+            repository(owner: $owner, name: $name) {
+              discussions(first: 100, after: $after) {
+                pageInfo {
+                  endCursor
+                  hasNextPage
+                }
+                edges {
+                  cursor
+                  node {
+                    id
+                    title
+                    url
+                    labels(first: 10) {
+                      nodes {
+                        color
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `
+        const variables = {
+          owner: r.owner,
+          name: r.repo,
+          after: endCursor
+        }
+        const _agendaDiscussions = await graphql(query, {
+          ...variables,
+          headers: {
+            authorization: `token ${token}`
+          }
+        })
+        const discussions = _agendaDiscussions?.repository?.discussions
+        if (discussions) {
+          const { edges, pageInfo } = discussions
+          for (const edge of edges) {
+            const labels = edge.node?.labels.nodes
+            if (Array.isArray(labels) && labels.some(label => label.name === agendaLabel)) {
+              console.log(`Adding Discussion: ${edge.node.url}`)
+              agendaIssues.push({
+                id: edge.node.id,
+                html_url: edge.node.url,
+                title: edge.node.title
+              })
+            }
+          }
+          hasNextPage = pageInfo.hasNextPage
+          endCursor = pageInfo.endCursor
+        } else {
+          hasNextPage = false
+        }
+      } while (hasNextPage)
     }
+
     console.log(`Found ${agendaIssues.length} total issues for agenda`)
 
     const opts = {
