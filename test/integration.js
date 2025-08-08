@@ -11,15 +11,47 @@ const { getOctokit } = require('@actions/github')
 const pkg = require('../package.json')
 const meetings = require('../lib/meetings')
 
+const mainRepo = 'pkgjs/meet'
+
+function getTestRepo () {
+  let testRepo = { owner: 'wesleytodd', repo: 'meeting-maker' } // ✨ Wes, the meeting maker ✨
+
+  if (process.env.GITHUB_REPOSITORY) {
+    // we appear to be in a GH action
+    if (process.env.GITHUB_REPOSITORY !== mainRepo) {
+      // action running in a fork
+      const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
+      testRepo = { owner, repo }
+    } else if (process.env.GITHUB_HEAD_REPO &&
+               process.env.GITHUB_HEAD_REPO !== mainRepo) {
+      // action running in a fork PR targeting main repo
+      // skip tests - GH token doesn't have write permissions for either repo
+      throw new Error('skipping integration tests: fork PR targeting main repo (no permissions)')
+    }
+  }
+
+  console.log(`using repository ${testRepo.owner}/${testRepo.repo}`)
+  return testRepo
+}
+
 suite(`${pkg.name} integration`, () => {
   let client
+  let testRepo
+
   before(() => {
-    client = getOctokit(process.env.GITHUB_TOKEN)
+    const token = process.env.GITHUB_TOKEN
+    if (!token) {
+      throw new Error('GITHUB_TOKEN environment variable is required for integration tests')
+    }
+
+    client = getOctokit(token)
+    testRepo = getTestRepo()
   })
+
   test('should create next meeting issue', async () => {
     const issue = await meetings.shouldCreateNextMeetingIssue(client, {
-      owner: 'wesleytodd',
-      repo: 'meeting-maker',
+      owner: testRepo.owner,
+      repo: testRepo.repo,
       issueTitle: ({ date }) => `Test Meeting ${date.toZonedDateTimeISO('UTC').toPlainDate().toString()}`,
       createWithin: 'P7D',
       agendaLabel: 'meeting-agenda',
@@ -30,8 +62,8 @@ suite(`${pkg.name} integration`, () => {
       now: Temporal.Instant.from('2020-04-13T13:00:00.0Z'),
       meetingLabels: ['testMeeting', 'test']
     })
-    assert.deepStrictEqual(issue.owner, 'wesleytodd')
-    assert.deepStrictEqual(issue.repo, 'meeting-maker')
+    assert.deepStrictEqual(issue.owner, testRepo.owner)
+    assert.deepStrictEqual(issue.repo, testRepo.repo)
     assert.deepStrictEqual(issue.title, `Test Meeting ${Temporal.Instant.from('2020-04-16T13:00:00.0Z').toZonedDateTimeISO('UTC').toPlainDate().toString()}`)
     assert.deepStrictEqual(issue.agendaLabel, 'meeting-agenda')
     assert.deepStrictEqual(issue.labels, ['testMeeting', 'test'])
@@ -41,8 +73,8 @@ suite(`${pkg.name} integration`, () => {
 
   test('create next meeting issue', async () => {
     const issue = await meetings.createNextMeeting(client, {
-      owner: 'wesleytodd',
-      repo: 'meeting-maker',
+      owner: testRepo.owner,
+      repo: testRepo.repo,
       createWithin: 'P7D',
       schedules: [
         // 5pm GMT April 2 repeating every 28 days
@@ -60,8 +92,8 @@ suite(`${pkg.name} integration`, () => {
     assert.deepStrictEqual(issue.data.state, 'open')
 
     await client.rest.issues.update({
-      owner: 'wesleytodd',
-      repo: 'meeting-maker',
+      owner: testRepo.owner,
+      repo: testRepo.repo,
       issue_number: issue.data.number,
       state: 'closed'
     })
