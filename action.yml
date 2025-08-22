@@ -48,6 +48,10 @@ inputs:
   orgs:
     description: 'An optional list of org in the format: <org>,<org>'
     required: false
+  discussions:
+    description: 'Disable/Active discussions fetching'
+    default: 'true'
+    required: false
 outputs:
   issueNumber:
     description: 'If an issue was created, this will be its number'

@@ -31,6 +31,8 @@ const pkg = require('./package.json')
     const issueTitle = core.getInput('issueTitle')
     const issueTemplate = core.getInput('issueTemplate')
 
+    const discussions = core.getBooleanInput('discussions')
+
     // variables we use for notes
     const createNotes = core.getInput('createNotes')
     const notesUserTemplate = core.getInput('notesTemplate')
@@ -96,7 +98,15 @@ const pkg = require('./package.json')
       }
     }
 
-    const agendaIssues = await agenda.fetchAgendaItems(client, repos, agendaLabel)
+    const agendaItems = []
+    agendaItems.push(...await agenda.fetchAgendaItems(client, repos, agendaLabel))
+
+    if (discussions) {
+      const agendaDiscussions = await agenda.fetchDiscussionsItems(repos, agendaLabel, token)
+      agendaItems.push(...agendaDiscussions)
+    }
+
+    console.log(`Found ${agendaItems.length} total items for agenda`)
 
     const opts = {
       ...repo,
@@ -106,7 +116,7 @@ const pkg = require('./package.json')
       createWithin,
       agendaLabel,
       meetingLink,
-      agendaIssues,
+      agendaIssues: agendaItems,
       issueTitle: titleTemplate
     }
 
