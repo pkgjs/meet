@@ -9,6 +9,7 @@ if (!global.Temporal) {
 const pkg = require('../package.json')
 const { convert, templates } = require('../lib/conversions')
 const meetings = require('../lib/meetings')
+const { buildQuery } = require('../lib/agenda')
 
 suite(`${pkg.name} unit`, () => {
   test('process schedule', () => {
@@ -287,4 +288,74 @@ meeting-agenda
 @nodejs/package-maintenance`
 
   assert.equal(await convert(input), output)
+})
+
+test('builds query with a single repo and single user', function () {
+  const repos = [{ owner: 'octocat', repo: 'hello-world' }]
+  const users = ['alice']
+  const agendaLabel = 'agenda'
+  const result = buildQuery(repos, users, agendaLabel)
+  assert.strictEqual(result,
+    'is:open label:"agenda" repo:octocat/hello-world OR owner:alice'
+  )
+})
+
+test('builds query with multiple repos and multiple users', function () {
+  const repos = [
+    { owner: 'octocat', repo: 'hello-world' },
+    { owner: 'nodejs', repo: 'node' }
+  ]
+  const users = ['alice', 'bob']
+  const agendaLabel = 'agenda'
+  const result = buildQuery(repos, users, agendaLabel)
+  assert.strictEqual(result,
+    'is:open label:"agenda" repo:octocat/hello-world OR repo:nodejs/node OR owner:alice OR owner:bob'
+  )
+})
+
+test('deduplicates repos correctly', function () {
+  const repos = [
+    { owner: 'octocat', repo: 'hello-world' },
+    { owner: 'octocat', repo: 'hello-world' } // duplicate
+  ]
+  const users = ['alice']
+  const agendaLabel = 'agenda'
+  const result = buildQuery(repos, users, agendaLabel)
+  assert.strictEqual(result,
+    'is:open label:"agenda" repo:octocat/hello-world OR owner:alice'
+  )
+})
+
+test('handles empty users array', function () {
+  const repos = [{ owner: 'octocat', repo: 'hello-world' }]
+  const users = []
+  const agendaLabel = 'agenda'
+  const result = buildQuery(repos, users, agendaLabel)
+  assert.strictEqual(result, 'is:open label:"agenda" repo:octocat/hello-world')
+})
+
+test('handles empty repos array', function () {
+  const repos = []
+  const users = ['alice']
+  const agendaLabel = 'agenda'
+  const result = buildQuery(repos, users, agendaLabel)
+  assert.strictEqual(result, 'is:open label:"agenda" owner:alice')
+})
+
+test('handles empty repos and users arrays', function () {
+  const repos = []
+  const users = []
+  const agendaLabel = 'agenda'
+  const result = buildQuery(repos, users, agendaLabel)
+  assert.strictEqual(result, 'is:open label:"agenda"')
+})
+
+test('handles label with spaces correctly', function () {
+  const repos = [{ owner: 'octocat', repo: 'hello-world' }]
+  const users = ['alice']
+  const agendaLabel = 'my agenda'
+  const result = buildQuery(repos, users, agendaLabel)
+  assert.strictEqual(result,
+    'is:open label:"my agenda" repo:octocat/hello-world OR owner:alice'
+  )
 })

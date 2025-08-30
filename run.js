@@ -37,7 +37,8 @@ const pkg = require('./package.json')
 
     const meetingLink = core.getInput('meetingLink')
 
-    // Get list of repos
+    // Get list of repos and users
+    const users = core.getInput('orgs').split(',').map((o) => o.trim())
     let repos = core.getInput('repos')
     const repo = context.repo
     if (repos) {
@@ -50,22 +51,6 @@ const pkg = require('./package.json')
       })
     } else {
       repos = [context.repo]
-    }
-
-    // Get repos from orgs
-    let orgs = core.getInput('orgs')
-    if (orgs) {
-      orgs = orgs.split(',').map((o) => o.trim())
-      for (const org of orgs) {
-        console.log(`Fetching repos for ${org}`)
-        const resp = await client.paginate('GET /orgs/{org}/repos', { org })
-        resp.forEach((r) => {
-          repos.push({
-            owner: org,
-            repo: r.name
-          })
-        })
-      }
     }
 
     let template = defaultTemplate
@@ -96,7 +81,7 @@ const pkg = require('./package.json')
       }
     }
 
-    const agendaIssues = await agenda.fetchAgendaItems(client, repos, agendaLabel)
+    const agendaIssues = await agenda.fetchAgendaItems(client, users, repos, agendaLabel)
 
     const opts = {
       ...repo,
